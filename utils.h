@@ -1,3 +1,4 @@
+#include <ctype.h>
 //Instância de uma tarefa = cada nova ativação (chegada) daquela tarefa periódica.
 typedef struct {
     char nome[2];
@@ -17,3 +18,5 @@ Task pcb ;
 struct ready_queue *next ; 
 }ready;
 
+int simular_instante(Task tarefas[], int n, int t, const char *algoritmo,
+                      int lost_deadlines[], int completas[]);
