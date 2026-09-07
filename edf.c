@@ -1,0 +1,1 @@
+//No EDF, a prioridade é definida por quem tem o menor deadline absoluto
