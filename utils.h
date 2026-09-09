@@ -32,7 +32,6 @@ struct ready_queue *next ;
 ready *remover_pronta(ready *head, TaskList *alvo) ;
 void liberar_prontas(ready *head) ;
 ready *inserir_pronta(ready *head, TaskList *alvo) ;
-int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,const char *algoritmo, int lost_deadlines[], int completas[]) ;
 void liberar_cadastradas(TaskList *head) ;
 TaskList *inserir_tarefa(TaskList *head, Task t);
 int contar_tarefas(TaskList *head) ;
