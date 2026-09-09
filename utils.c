@@ -97,7 +97,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
     ready *atual = *fila_prontos;
     while (atual != NULL) {
         ready *proximo = atual->next; /* guarda antes, pois o no pode ser removido */
-        TaskList *t_no = atual->tarefa;
+        TaskList *t_no = atual->pcb;
  
         if (t_no->tarefa.tempo_restante > 0 && t == t_no->tarefa.deadline_absoluto) {
             lost_deadlines[t_no->tarefa.id_entrada]++;
@@ -110,7 +110,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
     /* 3) Escolher a tarefa pronta de maior prioridade */
     TaskList *escolhida = NULL;
     for (ready *no = *fila_prontos; no != NULL; no = no->next) {
-        TaskList *cand = no->tarefa;
+        TaskList *cand = no->pcb;
         if (escolhida == NULL) {
             escolhida = cand;
             continue;
