@@ -3,109 +3,36 @@
 #include <stdio.h>
 #include <ctype.h> //pular linha em branco 
 #include "utils.h"
-
-//tarefas[] é o array com todas as tarefas do meu arquivo de entrada, 
-//sempre as mesmas n posições do começo ao fim da simulação. Não é uma "fila de prontos" que cresce e diminui.
-int simular_instante(Task tarefas[], int n, int t, const char *algoritmo,
-                      int lost_deadlines[], int completas[]) {
-
- 
-    /* Verificar chegada de novas instâncias */
-    for (int i = 0; i < n; i++) {
-        //se t bate com proxima_chegada, reseta o burst restante
-        //, calcula o novo deadline absoluto (t + deadline) e já agenda a próxima chegada (+= periodo).
-        if (t == tarefas[i].proxima_chegada) {
-            tarefas[i].tempo_restante   = tarefas[i].burst;
-            tarefas[i].deadline_absoluto = t + tarefas[i].deadline;
-            tarefas[i].proxima_chegada  += tarefas[i].periodo;
-        }
+/*Insere uma tarefa no fim da lista de cadastradas (mantem ordem do arquivo)*/
+TaskList *inserir_tarefa(TaskList *head, Task t) {
+    TaskList *novo = malloc(sizeof(TaskList));
+    if (novo == NULL) {
+        fprintf(stderr, "ERRO: falha ao alocar memoria\n");
+        exit(EXIT_FAILURE);
     }
- 
-    /* 2) Verificar deadlines perdidos (instância não terminou até o deadline absoluto) */
-    for (int i = 0; i < n; i++) {
-        if (tarefas[i].tempo_restante > 0 && t == tarefas[i].deadline_absoluto) {
-            lost_deadlines[i]++;
-            tarefas[i].tempo_restante = 0; /* descarta a rajada restante */
-        }
-    }
- 
-    /* 3) Escolher, entre as tarefas prontas, a de maior prioridade */
-    int escolhida = -1;
-    for (int i = 0; i < n; i++) {
-        if (tarefas[i].tempo_restante <= 0) continue; /* não está pronta */
- 
-        if (escolhida == -1) {
-            escolhida = i;
-            continue;
-        }
- 
-        int i_vence;
-        if (strcmp(algoritmo, "rate") == 0) {
-            /* Rate Monotonic: menor período = maior prioridade */
-            if (tarefas[i].periodo < tarefas[escolhida].periodo)
-                i_vence = 1;
-            else if (tarefas[i].periodo == tarefas[escolhida].periodo)
-                i_vence = tarefas[i].id_entrada < tarefas[escolhida].id_entrada;
-            else
-                i_vence = 0;
-        } else {
-            /* EDF: menor deadline absoluto = maior prioridade */
-            if (tarefas[i].deadline_absoluto < tarefas[escolhida].deadline_absoluto)
-                i_vence = 1;
-            else if (tarefas[i].deadline_absoluto == tarefas[escolhida].deadline_absoluto)
-                i_vence = tarefas[i].id_entrada < tarefas[escolhida].id_entrada;
-            else
-                i_vence = 0;
-        }
- 
-        if (i_vence) escolhida = i;
-    }
- 
-    /* 4) Executar 1 unidade de tempo da tarefa escolhida */
-    if (escolhida != -1) {
-        tarefas[escolhida].tempo_restante--;
-        if (tarefas[escolhida].tempo_restante == 0) {
-            completas[escolhida]++;
-        }
-    }
- 
-    /* 5) Registrar no log quem executou (ou idle) nesse instante */
-    if (escolhida != -1) {
-        fprintf(stderr, "[t=%d] %s executando (restante=%d)\n",
-                t, tarefas[escolhida].nome, tarefas[escolhida].tempo_restante);
-    } else {
-        fprintf(stderr, "[t=%d] idle\n", t);
-    }
- 
-    return escolhida;
+    novo->tarefa = t;
+    novo->next = NULL;
+    if (head == NULL) {
+        return novo; }
+    TaskList *atual = head;
+    while (atual->next != NULL){
+         atual = atual->next;}
+    atual->next = novo;
+    return head;
 }
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "utils.h"
-
-/*
- * Lê o arquivo de entrada e cadastra as tarefas.
- *
- * Formato esperado:
- *   [TEMPO TOTAL]
- *   [NOME] [PERIODO] [DEADLINE] [BURST]
- *   ...
- *
+/*Lê o arquivo de entrada e cadastra as tarefas.
  * Parâmetros:
  *   caminho          - caminho do arquivo de entrada (argv[2])
  *   tarefas_out      - endereço de um ponteiro Task*; a função aloca o vetor
  *                       e devolve o endereço dele aqui (*tarefas_out = vetor)
  *   tempo_total_out  - endereço de um int onde a função guarda o tempo total lido
- *
  * Retorno:
  *   >= 0  -> sucesso, valor = quantidade de tarefas cadastradas (n)
  *   -1    -> erro (mensagem já foi escrita em stderr, nada foi alocado)
- *
  * Importante: quem chamar essa função é responsável por dar free(*tarefas_out)
- * depois de usar, e por checar erro ANTES de acessar *tarefas_out.
- */
-int carregar_tarefas(const char *caminho, Task **tarefas_out, int *tempo_total_out) {
+ * depois de usar, e por checar erro ANTES de acessar *tarefas_out.*/
+
+int carregar_tarefas(const char *caminho, Task **tarefas_out, int *tempo_total_out) {     
 //carrega as tarefas e as cadastra 
     FILE *f = fopen(caminho, "r");
     if (f == NULL) {
