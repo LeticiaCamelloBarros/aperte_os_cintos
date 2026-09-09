@@ -3,6 +3,37 @@
 #include <stdio.h>
 #include <ctype.h> //pular linha em branco 
 #include "utils.h"
+/*Remove da fila de prontos o no cujo ponteiro ->tarefa == alvo.
+ * Retorna a nova head. Nao mexe na lista de cadastradas.*/  
+ready *remover_pronta(ready *head, TaskList *alvo) {
+    ready *atual = head, *anterior = NULL;
+ 
+    while (atual != NULL) {
+        if (atual->pcb == alvo) {
+            if (anterior == NULL) {
+                ready *proximo = atual->next;
+                free(atual);
+                return proximo;
+            } else {
+                anterior->next = atual->next;
+                free(atual);
+                return head;
+            }
+        }
+        anterior = atual;
+        atual = atual->next;
+    }
+    return head; /* nao encontrou, nada a fazer */
+}
+ 
+void liberar_prontas(ready *head) {
+    while (head != NULL) {
+        ready *proximo = head->next;
+        free(head);
+        head = proximo;
+    }
+}
+ 
 /* Insere no INICIO da fila de prontos (ordem nao importa, a escolha por
  * prioridade eh feita percorrendo a lista inteira depois) */
 

@@ -33,4 +33,4 @@ int simular_instante(Task tarefas[], int n, int t, const char *algoritmo,
                       int lost_deadlines[], int completas[]);
 TaskList *inserir_tarefa(TaskList *head, Task t);
 int contar_tarefas(TaskList *head) ;
-int carregar_tarefas(const char *caminho, Task **tarefas_out, int *tempo_total_out) ;
+int carregar_tarefas(const char *caminho, TaskList **tarefas_out, int *tempo_total_out) ;
