@@ -23,3 +23,17 @@ int prioridade_edf(TaskList *a, TaskList *b) {
     return 0;
 }
  
+/* ---------------------------------------------------------------------
+ * Resolve a string do argv[1] para o ponteiro de funcao certo.
+ * So faz strcmp aqui, uma vez -- nao dentro do laco de simulacao.
+ * --------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------
+ * Resolve a string do argv[1] para o ponteiro de funcao certo.
+ * So faz strcmp aqui, uma vez -- nao dentro do laco de simulacao.
+ * --------------------------------------------------------------------- */
+comparar_prioridade escolher_algoritmo(const char *nome) {
+    if (strcmp(nome, "rate") == 0) return prioridade_rate;
+    if (strcmp(nome, "edf")  == 0) return prioridade_edf;
+    return NULL; /* algoritmo invalido -- quem chamou deve checar isso */
+}
