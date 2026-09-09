@@ -81,7 +81,7 @@ TaskList *inserir_tarefa(TaskList *head, Task t) {
 int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
                       const char *algoritmo, int lost_deadlines[], int completas[]) {
  
-    /* 1) Chegadas: percorre TODAS as cadastradas, insere na fila de prontos
+    /* Chegadas: percorre TODAS as cadastradas, insere na fila de prontos
      *    quem chegou agora */
     for (TaskList *no = cadastradas; no != NULL; no = no->next) {
         if (t == no->tarefa.proxima_chegada) {
@@ -93,7 +93,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
         }
     }
  
-    /* 2) Deadlines perdidos: percorre so quem esta pronto */
+    /*  Deadlines perdidos: percorre so quem esta pronto */
     ready *atual = *fila_prontos;
     while (atual != NULL) {
         ready *proximo = atual->next; /* guarda antes, pois o no pode ser removido */
