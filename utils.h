@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //Instância de uma tarefa = cada nova ativação (chegada) daquela tarefa periódica.
+void liberar_cadastradas(TaskList *head) ;
 typedef struct {
     char nome[20];
     int periodo;

@@ -3,6 +3,14 @@
 #include <stdio.h>
 #include <ctype.h> //pular linha em branco 
 #include "utils.h"
+
+void liberar_cadastradas(TaskList *head) {
+    while (head != NULL) {
+        TaskList *proximo = head->next;
+        free(head);
+        head = proximo;
+    }
+}
 int contar_tarefas(TaskList *head) {
     int n = 0;
     for (TaskList *atual = head; atual != NULL; atual = atual->next) n++;
