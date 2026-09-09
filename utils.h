@@ -1,22 +1,30 @@
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 //Instância de uma tarefa = cada nova ativação (chegada) daquela tarefa periódica.
 typedef struct {
-    char nome[2];
-    int periodo;          // P
-    int deadline;         // D (relativo)
-    int burst;            // C (tempo de CPU necessário)
-    int id_entrada;       // Posição no arquivo (usado para desempate)
-    
-    // Estado dinâmico da instância atual
-    int tempo_restante;   // Quantas u.t. ainda precisa executar nesta instância
-    int proxima_chegada;  // Próximo instante t em que uma nova instância chegará
-    int deadline_absoluto;// Instante limite para concluir (t_chegada + D)
-} Task;
+    char nome[20];
+    int periodo;
+    int deadline;
+    int burst;
+    int id_entrada;
 
+    int tempo_restante;
+    int proxima_chegada;
+    int deadline_absoluto;
+} Task;
 typedef struct ready_queue {
 Task pcb ; 
 struct ready_queue *next ; 
 }ready;
-
+/* ---------------------------------------------------------------------
+ * LISTA 1: Tarefas CADASTRADAS
+ * Construida uma vez, a partir do arquivo. Nao muda depois disso.
+ * E' o "dono" de cada Task -- o estado real de cada tarefa mora aqui.
+ * --------------------------------------------------------------------- */
+typedef struct task_list {
+    Task tarefa;
+    struct task_list *next;
+} TaskList;
 int simular_instante(Task tarefas[], int n, int t, const char *algoritmo,
                       int lost_deadlines[], int completas[]);

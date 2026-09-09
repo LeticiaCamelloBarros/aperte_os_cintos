@@ -106,7 +106,7 @@ int simular_instante(Task tarefas[], int n, int t, const char *algoritmo,
  * depois de usar, e por checar erro ANTES de acessar *tarefas_out.
  */
 int carregar_tarefas(const char *caminho, Task **tarefas_out, int *tempo_total_out) {
-
+//carrega as tarefas e as cadastra 
     FILE *f = fopen(caminho, "r");
     if (f == NULL) {
         fprintf(stderr, "ERRO: nao foi possivel abrir o arquivo '%s'\n", caminho);
