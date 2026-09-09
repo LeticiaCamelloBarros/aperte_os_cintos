@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <ctype.h> //pular linha em branco 
 #include "utils.h"
+int contar_tarefas(TaskList *head) {
+    int n = 0;
+    for (TaskList *atual = head; atual != NULL; atual = atual->next) n++;
+    return n;
+}
 /*Insere uma tarefa no fim da lista de cadastradas (mantem ordem do arquivo)*/
 TaskList *inserir_tarefa(TaskList *head, Task t) {
     TaskList *novo = malloc(sizeof(TaskList));
