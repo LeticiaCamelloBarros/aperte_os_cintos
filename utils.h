@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+ready *inserir_pronta(ready *head, TaskList *alvo) ;
 //Instância de uma tarefa = cada nova ativação (chegada) daquela tarefa periódica.
 void liberar_cadastradas(TaskList *head) ;
 typedef struct {
@@ -14,10 +15,7 @@ typedef struct {
     int proxima_chegada;
     int deadline_absoluto;
 } Task;
-typedef struct ready_queue {
-Task pcb ; 
-struct ready_queue *next ; 
-}ready;
+
 /* ---------------------------------------------------------------------
  * LISTA 1: Tarefas CADASTRADAS
  * Construida uma vez, a partir do arquivo. Nao muda depois disso.
@@ -27,6 +25,10 @@ typedef struct task_list {
     Task tarefa;
     struct task_list *next;
 } TaskList;
+typedef struct ready_queue {
+TaskList *pcb ; 
+struct ready_queue *next ; 
+}ready;
 int simular_instante(Task tarefas[], int n, int t, const char *algoritmo,
                       int lost_deadlines[], int completas[]);
 TaskList *inserir_tarefa(TaskList *head, Task t);

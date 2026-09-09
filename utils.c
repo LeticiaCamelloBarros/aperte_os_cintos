@@ -3,7 +3,19 @@
 #include <stdio.h>
 #include <ctype.h> //pular linha em branco 
 #include "utils.h"
+/* Insere no INICIO da fila de prontos (ordem nao importa, a escolha por
+ * prioridade eh feita percorrendo a lista inteira depois) */
 
+ready *inserir_pronta(ready *head, TaskList *alvo) {
+    ready *novo = malloc(sizeof(ready));
+    if (novo == NULL) {
+        fprintf(stderr, "ERRO: falha ao alocar memoria\n");
+        exit(EXIT_FAILURE);
+    }
+    novo->pcb = alvo;
+    novo->next = head;
+    return novo;
+}
 void liberar_cadastradas(TaskList *head) {
     while (head != NULL) {
         TaskList *proximo = head->next;
