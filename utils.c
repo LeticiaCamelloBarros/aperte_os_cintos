@@ -76,7 +76,89 @@ TaskList *inserir_tarefa(TaskList *head, Task t) {
     atual->next = novo;
     return head;
 }
-
+/* SIMULACAO: usa as duas listas
+ * --------------------------------------------------------------------- */
+int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
+                      const char *algoritmo, int lost_deadlines[], int completas[]) {
+ 
+    /* 1) Chegadas: percorre TODAS as cadastradas, insere na fila de prontos
+     *    quem chegou agora */
+    for (TaskList *no = cadastradas; no != NULL; no = no->next) {
+        if (t == no->tarefa.proxima_chegada) {
+            no->tarefa.tempo_restante    = no->tarefa.burst;
+            no->tarefa.deadline_absoluto = t + no->tarefa.deadline;
+            no->tarefa.proxima_chegada  += no->tarefa.periodo;
+ 
+            *fila_prontos = inserir_pronta(*fila_prontos, no);
+        }
+    }
+ 
+    /* 2) Deadlines perdidos: percorre so quem esta pronto */
+    ready *atual = *fila_prontos;
+    while (atual != NULL) {
+        ready *proximo = atual->next; /* guarda antes, pois o no pode ser removido */
+        TaskList *t_no = atual->tarefa;
+ 
+        if (t_no->tarefa.tempo_restante > 0 && t == t_no->tarefa.deadline_absoluto) {
+            lost_deadlines[t_no->tarefa.id_entrada]++;
+            t_no->tarefa.tempo_restante = 0;
+            *fila_prontos = remover_pronta(*fila_prontos, t_no);
+        }
+        atual = proximo;
+    }
+ 
+    /* 3) Escolher a tarefa pronta de maior prioridade */
+    TaskList *escolhida = NULL;
+    for (ready *no = *fila_prontos; no != NULL; no = no->next) {
+        TaskList *cand = no->tarefa;
+        if (escolhida == NULL) {
+            escolhida = cand;
+            continue;
+        }
+ 
+        int cand_vence;
+        if (strcmp(algoritmo, "rate") == 0) {
+            if (cand->tarefa.periodo < escolhida->tarefa.periodo)
+                cand_vence = 1;
+            else if (cand->tarefa.periodo == escolhida->tarefa.periodo)
+                cand_vence = cand->tarefa.id_entrada < escolhida->tarefa.id_entrada;
+            else
+                cand_vence = 0;
+        } else { /* edf */
+            if (cand->tarefa.deadline_absoluto < escolhida->tarefa.deadline_absoluto)
+                cand_vence = 1;
+            else if (cand->tarefa.deadline_absoluto == escolhida->tarefa.deadline_absoluto)
+                cand_vence = cand->tarefa.id_entrada < escolhida->tarefa.id_entrada;
+            else
+                cand_vence = 0;
+        }
+ 
+        if (cand_vence) escolhida = cand;
+    }
+ 
+    /* 4) Executar 1 unidade */
+    int indice_executada = -1;
+    if (escolhida != NULL) {
+        escolhida->tarefa.tempo_restante--;
+        indice_executada = escolhida->tarefa.id_entrada;
+ 
+        if (escolhida->tarefa.tempo_restante == 0) {
+            completas[indice_executada]++;
+            *fila_prontos = remover_pronta(*fila_prontos, escolhida);
+        }
+    }
+ 
+    /* 5) Log */
+    if (escolhida != NULL) {
+        fprintf(stderr, "[t=%d] %s executando (restante=%d)\n",
+                t, escolhida->tarefa.nome, escolhida->tarefa.tempo_restante);
+    } else {
+        fprintf(stderr, "[t=%d] idle\n", t);
+    }
+ 
+    return indice_executada;
+}
+ 
 
 int carregar_tarefas(const char *caminho, TaskList **cadastradas_out, int *tempo_total_out) {
     FILE *f = fopen(caminho, "r");
