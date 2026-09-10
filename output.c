@@ -82,3 +82,18 @@ void logger_processar_tick(Logger *log, TaskList *cadastradas,
         fechar_segmento(log, cadastradas, 'F');
     }
 }
+void logger_finalizar(Logger *log, TaskList *cadastradas, int killed[]) {
+    if (log->task_atual == -2) return; /* nada pendente */
+ 
+    if (log->task_atual == -1) {
+        fechar_segmento(log, cadastradas, ' '); /* idle nao usa codigo */
+    } else {
+        /* Se sobrou um trecho de execucao aberto ate' o fim da simulacao
+         * sem ter sido fechado por F ou L, e' porque a tarefa ainda tinha
+         * tempo_restante > 0 quando o tempo total acabou -- ou seja, foi
+         * morta (killed). */
+        char codigo = killed[log->task_atual] ? 'K' : 'F';
+        fechar_segmento(log, cadastradas, codigo);
+    }
+}
+ 
