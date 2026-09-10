@@ -1,3 +1,5 @@
+#ifndef UTILS_H
+#define UTILS_H
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,3 +37,5 @@ ready *inserir_pronta(ready *head, TaskList *alvo) ;
 void liberar_cadastradas(TaskList *head) ;
 TaskList *inserir_tarefa(TaskList *head, Task t);
 int contar_tarefas(TaskList *head) ;
+
+#endif

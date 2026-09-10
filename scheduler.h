@@ -1,3 +1,5 @@
+#ifndef SCHEDULER_H
+#define SCHEDULER_H
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
@@ -8,3 +10,4 @@ typedef int (*comparar_prioridade)(TaskList *a, TaskList *b); // (B) tipo de PON
 comparar_prioridade escolher_algoritmo(const char *nome) ;
 int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
                       comparar_prioridade comparar, int lost_deadlines[], int completas[]); 
+#endif 
