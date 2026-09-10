@@ -40,7 +40,7 @@ comparar_prioridade escolher_algoritmo(const char *nome) {
 int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
                       comparar_prioridade comparar, int lost_deadlines[], int completas[]) {
  
-    /* 1) Chegadas: percorre todas as cadastradas, insere na fila de prontos
+    /* Chegadas: percorre todas as cadastradas, insere na fila de prontos
      *    quem chegou agora */
     for (TaskList *no = cadastradas; no != NULL; no = no->next) {
         if (t == no->tarefa.proxima_chegada) {
@@ -52,7 +52,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
         }
     }
  
-    /* 2) Deadlines perdidos: percorre so quem esta pronto */
+    /* Deadlines perdidos: percorre so quem esta pronto */
     ready *atual = *fila_prontos;
     while (atual != NULL) {
         ready *proximo = atual->next; /* guarda antes, pois o no pode ser removido */
@@ -66,7 +66,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
         atual = proximo;
     }
  
-    /* 3) Escolher a tarefa pronta de maior prioridade, usando o comparador
+    /*  Escolher a tarefa pronta de maior prioridade, usando o comparador
      *    ja resolvido -- nenhuma comparacao de string aqui */
     TaskList *escolhida = NULL;
     for (ready *no = *fila_prontos; no != NULL; no = no->next) {
@@ -76,7 +76,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
         }
     }
  
-    /* 4) Executar 1 unidade */
+    /*  Executar 1 unidade */
     int indice_executada = -1;
     if (escolhida != NULL) {
         escolhida->tarefa.tempo_restante--;
@@ -88,7 +88,7 @@ int simular_instante(TaskList *cadastradas, ready **fila_prontos, int t,
         }
     }
  
-    /* 5) Log */
+    /* Log */
     if (escolhida != NULL) {
         fprintf(stderr, "[t=%d] %s executando (restante=%d)\n",
                 t, escolhida->tarefa.nome, escolhida->tarefa.tempo_restante);

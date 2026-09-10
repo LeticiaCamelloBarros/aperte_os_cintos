@@ -35,4 +35,3 @@ ready *inserir_pronta(ready *head, TaskList *alvo) ;
 void liberar_cadastradas(TaskList *head) ;
 TaskList *inserir_tarefa(TaskList *head, Task t);
 int contar_tarefas(TaskList *head) ;
-int carregar_tarefas(const char *caminho, TaskList **tarefas_out, int *tempo_total_out) ;
