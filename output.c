@@ -114,4 +114,22 @@ void escrever_cabecalho(FILE *saida, const char *algoritmo) {
     para_maiusculas(maiusculo, algoritmo);
     fprintf(saida, "EXECUTION BY %s\n", maiusculo);
 }
+ void escrever_estatisticas(FILE *saida, TaskList *cadastradas,
+                            int lost_deadlines[], int completas[], int killed[]) {
+ 
+    fprintf(saida, "LOST DEADLINES\n");
+    for (TaskList *no = cadastradas; no != NULL; no = no->next) {
+        fprintf(saida, "[%s] %d\n", no->tarefa.nome, lost_deadlines[no->tarefa.id_entrada]);
+    }
+ 
+    fprintf(saida, "COMPLETE EXECUTION\n");
+    for (TaskList *no = cadastradas; no != NULL; no = no->next) {
+        fprintf(saida, "[%s] %d\n", no->tarefa.nome, completas[no->tarefa.id_entrada]);
+    }
+ 
+    fprintf(saida, "KILLED\n");
+    for (TaskList *no = cadastradas; no != NULL; no = no->next) {
+        fprintf(saida, "[%s] %d\n", no->tarefa.nome, killed[no->tarefa.id_entrada]);
+    }
+}
  
