@@ -15,11 +15,7 @@ typedef struct {
     int deadline_absoluto;
 } Task;
 
-/* ---------------------------------------------------------------------
- * LISTA 1: Tarefas CADASTRADAS
- * Construida uma vez, a partir do arquivo. Nao muda depois disso.
- * E' o "dono" de cada Task -- o estado real de cada tarefa mora aqui.
- * --------------------------------------------------------------------- */
+
 typedef struct task_list {
     Task tarefa;
     struct task_list *next;
