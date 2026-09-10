@@ -82,3 +82,52 @@ static int ler_linha_tarefa(const char *linha, int numero_linha, Task *t) {
  
     return 1;
 }
+
+int carregar_tarefas(const char *caminho, TaskList **cadastradas_out, int *tempo_total_out) {
+    FILE *f = fopen(caminho, "r");
+    if (f == NULL) {
+        fprintf(stderr, "ERRO: nao foi possivel abrir o arquivo '%s'\n", caminho);
+        return -1;
+    }
+ 
+    int tempo_total;
+    if (!ler_tempo_total(f, &tempo_total)) {
+        fclose(f);
+        return -1;
+    }
+ 
+    TaskList *cadastradas = NULL;
+    int n = 0;
+    int numero_linha = 1; /* linha 1 ja foi lida (tempo total) */
+    char linha[256];
+ 
+    while (fgets(linha, sizeof(linha), f) != NULL) {
+        numero_linha++;
+ 
+        Task t;
+        int resultado = ler_linha_tarefa(linha, numero_linha, &t);
+ 
+        if (resultado == -1) continue; /* linha em branco, ignora */
+ 
+        if (resultado == 0) {
+            liberar_cadastradas(cadastradas);
+            fclose(f);
+            return -1;
+        }
+ 
+        t.id_entrada = n; /* ordem de aparicao no arquivo = criterio de desempate */
+        cadastradas = inserir_tarefa(cadastradas, t);
+        n++;
+    }
+ 
+    fclose(f);
+ 
+    if (n == 0) {
+        fprintf(stderr, "ERRO: nenhuma tarefa encontrada no arquivo\n");
+        return -1; /* cadastradas ja esta NULL, nada a liberar */
+    }
+ 
+    *cadastradas_out = cadastradas;
+    *tempo_total_out = tempo_total;
+    return n;
+}
