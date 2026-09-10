@@ -97,3 +97,7 @@ void logger_finalizar(Logger *log, TaskList *cadastradas, int killed[]) {
     }
 }
  
+void logger_destruir(Logger *log) {
+    free(log);
+}
+ 
