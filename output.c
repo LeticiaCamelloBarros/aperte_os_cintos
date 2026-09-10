@@ -51,3 +51,34 @@ static void fechar_segmento(Logger *log, TaskList *cadastradas, char codigo) {
     log->task_atual = -2;
     log->unidades = 0;
 }
+
+void logger_processar_tick(Logger *log, TaskList *cadastradas,
+                            int executada_id, int completou_id, int perdeu_id) {
+ 
+    /*  Se a tarefa que estava com o trecho aberto perdeu o deadline
+     *    agora, fecha esse trecho com 'L'. (Isso acontece ANTES da troca
+     *    de trecho abaixo, porque a perda de deadline tira a tarefa da
+     *    disputa antes de qualquer nova escolha.) */
+    if (perdeu_id != -1 && log->task_atual == perdeu_id) {
+        fechar_segmento(log, cadastradas, 'L');
+    }
+ 
+    /*  Se quem executa agora e' diferente do trecho aberto, fecha o
+     *    trecho anterior (se ainda estiver aberto -- pode ja ter sido
+     *    fechado no passo 1) com 'H', e abre um trecho novo. */
+    if (log->task_atual != executada_id) {
+        if (log->task_atual != -2) {
+            fechar_segmento(log, cadastradas, 'H');
+        }
+        log->task_atual = executada_id;
+        log->unidades = 1;
+    } else {
+        log->unidades++;
+    }
+ 
+    /* Se a tarefa que executou agora terminou (chegou a burst 0),
+     *    fecha o trecho imediatamente com 'F'. */
+    if (completou_id != -1 && executada_id == completou_id) {
+        fechar_segmento(log, cadastradas, 'F');
+    }
+}
