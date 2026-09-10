@@ -1,43 +1,36 @@
+# ---------------------------------------------------------------------
+# Makefile do simulador de escalonamento (Rate Monotonic / EDF)
+# ---------------------------------------------------------------------
 
+CC     = gcc
+CFLAGS = -Wall -Wextra -std=c11 -g
 
-CC      = gcc
-CFLAGS  = -Wall -Wextra -std=c11 -g
-TARGET  = scheduler
+# Requisito 2: o executavel final tem que se chamar exatamente "scheduler"
+TARGET = scheduler
 
-# Lista de todos os .c do projeto
-SRCS = main.c utils.c scheduler.c parser.c
-
-# Gera automaticamente a lista de .o a partir dos .c (main.c -> main.o, etc.)
+SRCS = main.c parser.c scheduler.c utils.c output.c
 OBJS = $(SRCS:.c=.o)
 
-# Regra padrao: "make" sozinho constroi o executavel
+# Requisito 1: "make" sozinho (sem alvo) tem que compilar o projeto.
+# Como "all" e' o PRIMEIRO alvo do arquivo, e' ele que roda por padrao.
 all: $(TARGET)
 
-# Linkagem final: junta todos os .o no executavel
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
-# Regra generica: como compilar qualquer .c em .o
-# $< = o primeiro pre-requisito (o .c), $@ = o alvo (o .o)
+# Regra generica: como gerar qualquer .o a partir do .c correspondente
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Dependencias extras: se um .h mudar, os .c que o incluem devem recompilar
-main.o: main.c utils.h scheduler.h parser.h
-utils.o: utils.c utils.h
-algoritms.o: scheduler.c scheduler.h utils.h
-parser.o: parser.c parser.h utils.h
+# Dependencias extras: se um .h mudar, os .c que o incluem recompilam
+main.o:      main.c      utils.h parser.h scheduler.h output.h
+parser.o:    parser.c    parser.h utils.h
+scheduler.o: scheduler.c scheduler.h utils.h
+utils.o:     utils.c     utils.h
+output.o:    output.c    output.h utils.h
 
-# Remove tudo que foi gerado pela compilacao
+# Requisito 3: alvo de limpeza dos arquivos compilados e intermediarios
 clean:
 	rm -f $(OBJS) $(TARGET)
 
-# Recompila do zero
-rebuild: clean all
-
-# Roda o executavel com os algoritmos, exemplo de uso:
-#   make run ARGS="rate voo.txt"
-run: $(TARGET)
-	./$(TARGET) $(ARGS)
-
-.PHONY: all clean rebuild run
+.PHONY: all clean
