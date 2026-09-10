@@ -14,4 +14,22 @@ static int linha_em_branco(const char *linha) {
     }
     return 1;
 }
+ /* Le e valida a primeira linha do arquivo (tempo total de simulacao).
+ * Retorna 1 em sucesso (preenche *tempo_total), 0 em erro (ja imprime a mensagem). */
+static int ler_tempo_total(FILE *f, int *tempo_total) {
+    char linha[256];
  
+    if (fgets(linha, sizeof(linha), f) == NULL) {
+        fprintf(stderr, "ERRO: arquivo vazio ou ilegivel\n");
+        return 0;
+    }
+ 
+    char lixo[8];
+    int campos = sscanf(linha, "%d %7s", tempo_total, lixo);
+    if (campos != 1 || *tempo_total <= 0) {
+        fprintf(stderr, "ERRO: tempo total invalido na primeira linha\n");
+        return 0;
+    }
+ 
+    return 1;
+}
