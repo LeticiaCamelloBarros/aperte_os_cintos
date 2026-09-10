@@ -25,3 +25,12 @@ Logger *logger_criar(FILE *saida) {
     log->unidades = 0;
     return log;
 }
+ 
+/* Acha o no da lista de cadastradas cujo id_entrada bate com 'id'. */
+static TaskList *buscar_por_id(TaskList *cadastradas, int id) {
+    for (TaskList *no = cadastradas; no != NULL; no = no->next) {
+        if (no->tarefa.id_entrada == id) return no;
+    }
+    return NULL; /* nao deveria acontecer se id veio de uma chamada valida */
+}
+ 
