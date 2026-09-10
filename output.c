@@ -101,3 +101,17 @@ void logger_destruir(Logger *log) {
     free(log);
 }
  
+static void para_maiusculas(char *destino, const char *origem) {
+    int i = 0;
+    for (; origem[i] != '\0'; i++) {
+        destino[i] = toupper((unsigned char)origem[i]);
+    }
+    destino[i] = '\0';
+}
+ 
+void escrever_cabecalho(FILE *saida, const char *algoritmo) {
+    char maiusculo[16];
+    para_maiusculas(maiusculo, algoritmo);
+    fprintf(saida, "EXECUTION BY %s\n", maiusculo);
+}
+ 
