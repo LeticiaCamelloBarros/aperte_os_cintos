@@ -33,4 +33,21 @@ static TaskList *buscar_por_id(TaskList *cadastradas, int id) {
     }
     return NULL; /* nao deveria acontecer se id veio de uma chamada valida */
 }
+
+/* Fecha o trecho atualmente aberto, escrevendo a linha no arquivo,
+ * e reseta o estado do logger para "nada aberto". Se nao havia nada
+ * aberto, nao faz nada (seguro chamar mesmo sem trecho pendente). */
+static void fechar_segmento(Logger *log, TaskList *cadastradas, char codigo) {
+    if (log->task_atual == -2) return; /* nada para fechar */
  
+    if (log->task_atual == -1) {
+        fprintf(log->saida, "idle for %d units\n", log->unidades);
+    } else {
+        TaskList *no = buscar_por_id(cadastradas, log->task_atual);
+        fprintf(log->saida, "[%s] for %d units - %c\n",
+                no->tarefa.nome, log->unidades, codigo);
+    }
+ 
+    log->task_atual = -2;
+    log->unidades = 0;
+}
